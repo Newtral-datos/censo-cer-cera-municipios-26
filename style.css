@@ -363,6 +363,12 @@ main#map {
   flex: none;
 }
 
+/* botones para desplegar buscador/filtro y leyenda en móvil; en escritorio
+   los paneles están siempre visibles y estos botones no se muestran */
+.mobile-toggles {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .geocoder,
   .pct-filter {
@@ -378,5 +384,40 @@ main#map {
   }
   .topbar h1 {
     font-size: 15px;
+  }
+
+  .mobile-toggles {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 8px 6px;
+    font: inherit;
+    font-size: 12px;
+    font-family: var(--sans);
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  .toggle-btn.is-active {
+    color: var(--text);
+    border-color: var(--accent-border);
+    background: var(--accent-bg);
+  }
+
+  /* paneles colapsados por defecto: solo quedan los botones de arriba */
+  body.controls-collapsed .geocoder,
+  body.controls-collapsed .pct-filter {
+    display: none;
+  }
+  body.legend-collapsed .legend {
+    display: none;
   }
 }

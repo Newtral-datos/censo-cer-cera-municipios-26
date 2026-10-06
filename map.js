@@ -126,6 +126,9 @@ function setupGeocoder(map, index) {
     new maplibregl.Popup(POPUP_OPTIONS).setLngLat(center).setHTML(popupHtml(f)).addTo(map);
     closeResults();
     input.value = "";
+    // en móvil, vuelve a dejar el mapa libre tras elegir un resultado
+    document.body.classList.add("controls-collapsed");
+    document.getElementById("controls-toggle")?.classList.remove("is-active");
   }
 
   input.addEventListener("input", () => {
@@ -262,6 +265,25 @@ async function main() {
 
   setupGeocoder(map, index);
   setupPctFilter(map);
+  setupMobileToggles();
+}
+
+// En móvil el buscador, el filtro y la leyenda ocultan demasiado mapa si están
+// siempre visibles, así que empiezan colapsados (ver body.controls-collapsed /
+// body.legend-collapsed en el CSS, solo con efecto bajo el media query móvil)
+// y estos dos botones los despliegan/ocultan.
+function setupMobileToggles() {
+  const controlsBtn = document.getElementById("controls-toggle");
+  const legendBtn = document.getElementById("legend-toggle");
+
+  controlsBtn.addEventListener("click", () => {
+    const open = document.body.classList.toggle("controls-collapsed") === false;
+    controlsBtn.classList.toggle("is-active", open);
+  });
+  legendBtn.addEventListener("click", () => {
+    const open = document.body.classList.toggle("legend-collapsed") === false;
+    legendBtn.classList.toggle("is-active", open);
+  });
 }
 
 main();

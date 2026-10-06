@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body class="controls-collapsed legend-collapsed">
     <header class="topbar">
       <div class="topbar__text">
         <h1>Españoles registrados en el extranjero (CERA) frente a censo en España</h1>
@@ -15,6 +15,10 @@
           Por municipio de inscripción. Censo cerrado a 1 de agosto de 2026</p>
       </div>
       <img src="logo_newtral.png" alt="Newtral" class="topbar__logo" />
+      <div class="mobile-toggles">
+        <button id="controls-toggle" class="toggle-btn" type="button">🔍 Buscar y filtrar</button>
+        <button id="legend-toggle" class="toggle-btn" type="button">▦ Leyenda</button>
+      </div>
     </header>
 
     <main id="map">
