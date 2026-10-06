@@ -31,7 +31,7 @@ function quantileBreaks(values, n) {
 
 function buildColorExpression(breaks) {
   // ["step", valor, color0, break0, color1, break1, ..., color6]
-  const expr = ["step", ["get", "pct_extranjero_sobre_espanol"], SEQUENTIAL_BRAND[0]];
+  const expr = ["step", ["get", "pct_extranjero"], SEQUENTIAL_BRAND[0]];
   breaks.forEach((b, i) => {
     expr.push(b, SEQUENTIAL_BRAND[i + 1]);
   });
@@ -41,7 +41,7 @@ function buildColorExpression(breaks) {
 function buildLegend(breaks, max) {
   const edges = [0, ...breaks, max];
   const el = document.getElementById("legend");
-  el.innerHTML = '<p class="legend__title">% CERA / censo España</p>';
+  el.innerHTML = '<p class="legend__title">% extranjero / total</p>';
   SEQUENTIAL_BRAND.forEach((hex, i) => {
     const row = document.createElement("div");
     row.className = "legend__row";
@@ -61,7 +61,8 @@ function popupHtml(props) {
       <p class="popup__subtitle">${props.provincia}</p>
       <div class="popup__row"><span>Censo en España</span><span>${fmt.format(props.espanol ?? props["1agoespanol"])}</span></div>
       <div class="popup__row"><span>Censo CERA (extranjero)</span><span>${fmt.format(props.extranjero ?? props["1agoextranjero"])}</span></div>
-      <div class="popup__row"><span>% CERA / España</span><span class="popup__pct">${fmtPct(props.pct ?? props.pct_extranjero_sobre_espanol)}</span></div>
+      <div class="popup__row"><span>Total</span><span>${fmt.format(props.total)}</span></div>
+      <div class="popup__row"><span>% extranjero</span><span class="popup__pct">${fmtPct(props.pct ?? props.pct_extranjero)}</span></div>
     </div>
   `;
 }
@@ -80,8 +81,9 @@ function overallBounds(index) {
   return [[minx, miny], [maxx, maxy]];
 }
 
-// Filtro por % CERA / censo España: oculta polígonos por debajo del umbral
-// en las tres capas (relleno, borde y borde de hover) a la vez.
+// Filtro por % extranjero sobre el total (español + extranjero): oculta
+// polígonos por debajo del umbral en las tres capas (relleno, borde y borde
+// de hover) a la vez.
 function setupPctFilter(map) {
   const slider = document.getElementById("pct-slider");
   const valueEl = document.getElementById("pct-slider-value");
@@ -92,7 +94,7 @@ function setupPctFilter(map) {
     valueEl.textContent = threshold === 0 ? "Todos" : `≥ ${fmtPct(threshold)}`;
     if (raf) return;
     raf = requestAnimationFrame(() => {
-      const filter = threshold === 0 ? null : [">=", ["get", "pct_extranjero_sobre_espanol"], threshold];
+      const filter = threshold === 0 ? null : [">=", ["get", "pct_extranjero"], threshold];
       map.setFilter("municipios-fill", filter);
       map.setFilter("municipios-outline", filter);
       map.setFilter("municipios-hover", filter);
