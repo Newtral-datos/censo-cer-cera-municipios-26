@@ -9,15 +9,26 @@
   </head>
   <body>
     <header class="topbar">
-      <h1>Españoles registrados en el extranjero (CERA) frente a censo en España</h1>
-      <p class="subtitle">
-        Por municipio de inscripción. Censo cerrado a 1 de agosto de 2026</p>
+      <div class="topbar__text">
+        <h1>Españoles registrados en el extranjero (CERA) frente a censo en España</h1>
+        <p class="subtitle">
+          Por municipio de inscripción. Censo cerrado a 1 de agosto de 2026</p>
+      </div>
+      <img src="logo_newtral.png" alt="Newtral" class="topbar__logo" />
     </header>
 
     <main id="map">
       <div class="geocoder">
         <input id="geocoder-input" class="geocoder__input" type="text" placeholder="Buscar municipio…" autocomplete="off" />
         <ul id="geocoder-results" class="geocoder__results"></ul>
+      </div>
+
+      <div class="pct-filter">
+        <div class="pct-filter__header">
+          <span class="pct-filter__label">% CERA mínimo</span>
+          <span id="pct-slider-value" class="pct-filter__value">Todos</span>
+        </div>
+        <input id="pct-slider" class="pct-filter__slider" type="range" min="0" max="100" step="1" value="0" />
       </div>
     </main>
 

@@ -10,6 +10,7 @@
   --accent: #0e8162;
   --accent-bg: rgba(1, 243, 179, 0.14);
   --accent-border: rgba(1, 243, 179, 0.6);
+  --brand: #01f3b3; /* color corporativo exacto, igual en claro y oscuro */
   --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -51,10 +52,24 @@ body {
 }
 
 .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   padding: 14px 20px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   z-index: 10;
+}
+
+.topbar__text {
+  min-width: 0;
+}
+
+.topbar__logo {
+  height: 28px;
+  width: auto;
+  flex: none;
 }
 
 .topbar h1 {
@@ -102,8 +117,77 @@ main#map {
   position: absolute;
   top: 16px;
   left: 16px;
+  z-index: 820;
+  width: 260px;
+}
+
+/* slider de filtro por % CERA */
+.pct-filter {
+  position: absolute;
+  top: 70px;
+  left: 16px;
   z-index: 800;
   width: 260px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.pct-filter__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.pct-filter__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pct-filter__value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+
+.pct-filter__slider {
+  width: 100%;
+  display: block;
+  margin: 0;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.pct-filter__slider::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--border);
+}
+
+.pct-filter__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  background: var(--brand);
+  cursor: pointer;
+  margin-top: -5.5px;
+}
+
+.pct-filter__slider::-moz-range-track {
+  height: 3px;
+  background: var(--border);
+}
+
+.pct-filter__slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  border: none;
+  background: var(--brand);
+  cursor: pointer;
 }
 
 .geocoder__input {
@@ -176,7 +260,7 @@ main#map {
   color: var(--text);
   border-radius: 0;
   border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
+  border-top: 3px solid var(--brand);
   box-shadow: var(--shadow);
   padding: 0;
   font-family: var(--sans);
@@ -240,7 +324,7 @@ main#map {
 }
 
 .popup__pct {
-  color: var(--accent);
+  color: var(--brand);
   font-size: 15px;
 }
 
@@ -280,8 +364,17 @@ main#map {
 }
 
 @media (max-width: 640px) {
-  .geocoder {
+  .geocoder,
+  .pct-filter {
     width: calc(100% - 32px);
+  }
+  .topbar {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .topbar__logo {
+    height: 20px;
   }
   .topbar h1 {
     font-size: 15px;

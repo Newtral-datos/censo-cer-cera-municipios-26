@@ -68,6 +68,39 @@ function popupHtml(props) {
 
 const POPUP_OPTIONS = { closeButton: true, maxWidth: "260px" };
 
+function overallBounds(index) {
+  let minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+  for (const f of index) {
+    const [x0, y0, x1, y1] = f.bbox;
+    if (x0 < minx) minx = x0;
+    if (y0 < miny) miny = y0;
+    if (x1 > maxx) maxx = x1;
+    if (y1 > maxy) maxy = y1;
+  }
+  return [[minx, miny], [maxx, maxy]];
+}
+
+// Filtro por % CERA / censo España: oculta polígonos por debajo del umbral
+// en las tres capas (relleno, borde y borde de hover) a la vez.
+function setupPctFilter(map) {
+  const slider = document.getElementById("pct-slider");
+  const valueEl = document.getElementById("pct-slider-value");
+
+  let raf = null;
+  slider.addEventListener("input", () => {
+    const threshold = Number(slider.value);
+    valueEl.textContent = threshold === 0 ? "Todos" : `≥ ${fmtPct(threshold)}`;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      const filter = threshold === 0 ? null : [">=", ["get", "pct_extranjero_sobre_espanol"], threshold];
+      map.setFilter("municipios-fill", filter);
+      map.setFilter("municipios-outline", filter);
+      map.setFilter("municipios-hover", filter);
+      raf = null;
+    });
+  });
+}
+
 // Buscador local sobre el índice de municipios (no depende de un geocoder
 // externo: así desambigua los 17 nombres de municipio repetidos en más de
 // una provincia y siempre encuentra lo que el mapa realmente tiene).
@@ -178,32 +211,48 @@ async function main() {
           type: "line",
           source: "municipios",
           "source-layer": "municipios",
-          paint: { "line-color": isDark ? "#ffffff" : "#0b0b0b", "line-width": 2 },
-          filter: ["==", ["get", "cod_ine"], ""],
+          paint: {
+            "line-color": isDark ? "#ffffff" : "#0b0b0b",
+            "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0],
+          },
         },
       ],
     },
-    center: [-3.7, 40.2],
-    zoom: 5.2,
+    bounds: overallBounds(index),
+    fitBoundsOptions: { padding: 24 },
     maxZoom: 14,
     minZoom: 3,
     attributionControl: true,
   });
 
-  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  // abajo-derecha: en móvil el buscador y el slider ocupan casi todo el ancho
+  // arriba, así que los botones de zoom arriba-derecha quedaban tapados.
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+
+  // Hover vía feature-state (barato, solo GPU) en vez de setFilter en cada
+  // mousemove (eso recompila el estilo en cada píxel y provocaba el retraso).
+  const hoverTarget = { source: "municipios", sourceLayer: "municipios", id: null };
+
+  function setHover(id, value) {
+    if (id == null) return;
+    hoverTarget.id = id;
+    map.setFeatureState(hoverTarget, { hover: value });
+  }
 
   let hoveredId = null;
   map.on("mousemove", "municipios-fill", (e) => {
+    if (!e.features.length) return;
+    const id = e.features[0].id;
+    if (id === hoveredId) return;
     map.getCanvas().style.cursor = "pointer";
-    if (e.features.length) {
-      hoveredId = e.features[0].properties.cod_ine;
-      map.setFilter("municipios-hover", ["==", ["get", "cod_ine"], hoveredId]);
-    }
+    setHover(hoveredId, false);
+    hoveredId = id;
+    setHover(hoveredId, true);
   });
   map.on("mouseleave", "municipios-fill", () => {
     map.getCanvas().style.cursor = "";
+    setHover(hoveredId, false);
     hoveredId = null;
-    map.setFilter("municipios-hover", ["==", ["get", "cod_ine"], ""]);
   });
 
   map.on("click", "municipios-fill", (e) => {
@@ -212,6 +261,7 @@ async function main() {
   });
 
   setupGeocoder(map, index);
+  setupPctFilter(map);
 }
 
 main();
