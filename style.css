@@ -1,0 +1,289 @@
+:root {
+  color-scheme: light dark;
+
+  --text: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --bg: #f9f9f7;
+  --surface: #fcfcfb;
+  --border: #e1e0d9;
+  --accent: #0e8162;
+  --accent-bg: rgba(1, 243, 179, 0.14);
+  --accent-border: rgba(1, 243, 179, 0.6);
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --bg: #0d0d0d;
+    --surface: #1a1a19;
+    --border: #2c2c2a;
+    --accent: #01f3b3;
+    --accent-bg: rgba(1, 243, 179, 0.15);
+    --accent-border: rgba(1, 243, 179, 0.55);
+    --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--bg);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.topbar {
+  padding: 14px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.formula {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+main#map {
+  flex: 1;
+  position: relative;
+  background: var(--bg);
+}
+
+.maplibregl-map {
+  background: var(--bg);
+  font-family: var(--sans);
+}
+
+.maplibregl-ctrl-group {
+  border-radius: 0;
+  box-shadow: var(--shadow);
+}
+
+.maplibregl-ctrl-group button {
+  border-radius: 0 !important;
+}
+
+/* todos los controles flotantes del mapa son cuadrados, sin radio de borde */
+
+/* buscador de municipios (geocoder local) */
+.geocoder {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 800;
+  width: 260px;
+}
+
+.geocoder__input {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: var(--shadow);
+  outline: none;
+}
+
+.geocoder__input:focus {
+  border-color: var(--accent-border);
+}
+
+.geocoder__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  box-shadow: var(--shadow);
+  display: none;
+}
+
+.geocoder__results.is-open {
+  display: block;
+}
+
+.geocoder__result {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+
+.geocoder__result:last-child {
+  border-bottom: none;
+}
+
+.geocoder__result:hover,
+.geocoder__result.is-active {
+  background: var(--accent-bg);
+}
+
+.geocoder__result .muni {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.geocoder__result .prov {
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+/* popups de municipio: tarjeta cuadrada, sin la flecha triangular por defecto */
+.maplibregl-popup-tip {
+  display: none;
+}
+
+.maplibregl-popup-content {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 0;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  box-shadow: var(--shadow);
+  padding: 0;
+  font-family: var(--sans);
+}
+
+.maplibregl-popup-close-button {
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  width: 26px;
+  height: 26px;
+  border-radius: 0;
+}
+
+.maplibregl-popup-close-button:hover {
+  background: var(--accent-bg);
+  color: var(--text);
+}
+
+.popup {
+  padding: 14px 16px;
+}
+
+.popup__title {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  padding-right: 18px;
+}
+
+.popup__subtitle {
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.popup__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  font-size: 13px;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+}
+
+.popup__row:first-of-type {
+  border-top: none;
+}
+
+.popup__row span:first-child {
+  color: var(--text-secondary);
+}
+
+.popup__row span:last-child {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.popup__pct {
+  color: var(--accent);
+  font-size: 15px;
+}
+
+/* leyenda del mapa (escala de color) */
+.legend {
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  z-index: 500;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.legend__title {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0 0 6px;
+}
+
+.legend__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1px 0;
+}
+
+.legend__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .geocoder {
+    width: calc(100% - 32px);
+  }
+  .topbar h1 {
+    font-size: 15px;
+  }
+}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Censo CERA por municipio</title>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Españoles registrados en el extranjero (CERA) frente a censo en España</h1>
+      <p class="subtitle">
+        Por municipio de inscripción. Censo cerrado a 1 de agosto de 2026</p>
+    </header>
+
+    <main id="map">
+      <div class="geocoder">
+        <input id="geocoder-input" class="geocoder__input" type="text" placeholder="Buscar municipio…" autocomplete="off" />
+        <ul id="geocoder-results" class="geocoder__results"></ul>
+      </div>
+    </main>
+
+    <div id="legend" class="legend"></div>
+
+    <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.js"></script>
+    <script src="map.js"></script>
+  </body>
+</html>
